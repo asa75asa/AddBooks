@@ -16,14 +16,18 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_buttonDBDir_clicked()
 {
-  QString dir = QFileDialog::getExistingDirectory(this, tr("Select directory with new files"),
+  QString dir = QFileDialog::getExistingDirectory(this, tr("Select directory with database files"),
                                                    "",
                                                    QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+  ui->editDBDir->setText(dir);
 }
 
 void MainWindow::on_buttonNewDir_clicked()
 {
-
+  QString dir = QFileDialog::getExistingDirectory(this, tr("Select directory with new files"),
+                                                   "",
+                                                   QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+  ui->editNewDir->setText(dir);
 }
 
 void MainWindow::on_buttonStart_clicked()
