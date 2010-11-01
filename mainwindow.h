@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QString>
+class QSettings;
 
 namespace Ui {
     class MainWindow;
@@ -17,6 +19,11 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QSettings *pSettings;
+    QString sHostName;
+    bool bStarted;
+    void saveSettings();
+    void loadSettings();
 private slots:
     void on_buttonDBDir_clicked();
     void on_buttonNewDir_clicked();
