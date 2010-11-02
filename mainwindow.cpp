@@ -62,6 +62,7 @@ void MainWindow::saveSettings()
   pSettings->setValue(tr("Settings/Database"), ui->editDatabase->text());
   pSettings->setValue(tr("Settings/Username"), ui->editUsername->text());
   pSettings->setValue(tr("Settings/Password"), ui->editPassword->text());
+  pSettings->setValue(tr("Settings/HostName"), sHostName);
 }
 
 void MainWindow::loadSettings()
@@ -97,5 +98,4 @@ void MainWindow::loadSettings()
     ui->editPassword->setText(text);
   }
   sHostName = pSettings->value(tr("Settings/HostName"), tr("localhost")).toString();
-  // test
 }
