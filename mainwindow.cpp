@@ -97,4 +97,5 @@ void MainWindow::loadSettings()
     ui->editPassword->setText(text);
   }
   sHostName = pSettings->value(tr("Settings/HostName"), tr("localhost")).toString();
+  // test
 }
