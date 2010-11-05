@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QString>
+#include <QThread>
 class QSettings;
 
 namespace Ui {
@@ -22,12 +23,20 @@ private:
     QSettings *pSettings;
     QString sHostName;
     bool bStarted;
+    MyThread thread;
     void saveSettings();
     void loadSettings();
 private slots:
     void on_buttonDBDir_clicked();
     void on_buttonNewDir_clicked();
     void on_buttonStart_clicked();
+};
+
+
+class MyThread : public QThread
+{
+public:
+  void run();
 };
 
 #endif // MAINWINDOW_H

@@ -99,3 +99,12 @@ void MainWindow::loadSettings()
   }
   sHostName = pSettings->value(tr("Settings/HostName"), tr("localhost")).toString();
 }
+
+void MyThread::run()
+{
+  QTcpSocket socket;
+  // connect QTcpSocket's signals somewhere meaningful
+  ...
+    socket.connectToHost(hostName, portNumber);
+  exec();
+}
