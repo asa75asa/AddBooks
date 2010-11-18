@@ -6,8 +6,9 @@
 
 class WorkingThread : public QThread
 {
+  Q_OBJECT
 public:
-  WorkingThread(QObject *parent);
+  WorkingThread();
   ~WorkingThread();
   void run();
   void stop();

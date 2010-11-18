@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QString>
 #include <QThread>
+#include "workingthread.h"
 class QSettings;
 
 namespace Ui {
@@ -23,7 +24,7 @@ private:
     QSettings *pSettings;
     QString sHostName;
     bool bStarted;
-    MyThread thread;
+    WorkingThread thread;
     void saveSettings();
     void loadSettings();
 private slots:

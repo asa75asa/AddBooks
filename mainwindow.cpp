@@ -40,13 +40,27 @@ void MainWindow::on_buttonStart_clicked()
   if (bStarted)
   {
     ui->buttonStart->setText(tr("Start"));
-
+    thread.stop();
 
   }
   else
   {
     ui->buttonStart->setText(tr("Stop"));
     saveSettings();
+    if (thread.setData(ui->editNewDir->text(),
+                   ui->editDBDir->text(),
+                   tr("localhost"),
+                   ui->editDatabase->text(),
+                   ui->editUsername->text(),
+                   ui->editPassword->text(),
+                   ui->checkCompress->isChecked(),
+                   true,
+                   true))
+    {
+      thread.run();
+    }
+
+
 
   }
   bStarted = !bStarted;
@@ -100,11 +114,3 @@ void MainWindow::loadSettings()
   sHostName = pSettings->value(tr("Settings/HostName"), tr("localhost")).toString();
 }
 
-void MyThread::run()
-{
-  QTcpSocket socket;
-  // connect QTcpSocket's signals somewhere meaningful
-  ...
-    socket.connectToHost(hostName, portNumber);
-  exec();
-}

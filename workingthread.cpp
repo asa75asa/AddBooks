@@ -1,8 +1,8 @@
 #include "workingthread.h"
 #include <QDirIterator>
 
-WorkingThread::WorkingThread(QObject *parent)
-  : QThread(parent)
+WorkingThread::WorkingThread()
+: QThread()
   , stopped(false)
   , sNewDir(tr(""))
   , sOldDir(tr(""))
@@ -16,6 +16,8 @@ WorkingThread::WorkingThread(QObject *parent)
   , lStartNumber(1)
   , sStatus(tr(""))
 {
+  database = QSqlDatabase::addDatabase(tr("QMYSQL"));
+
 }
 
 WorkingThread::~WorkingThread()
@@ -33,10 +35,11 @@ bool WorkingThread::setData(const QString &newDir,
                             bool moveFiles,
                             bool renameFiles)
 {
-  if (running())
+  if (isRunning())
   {
     // don't set data if the thread is already running
-    return;
+    sStatus = tr("Thread is already running");
+    return false;
   }
   sNewDir = newDir;
   sOldDir = oldDir;
@@ -47,6 +50,7 @@ bool WorkingThread::setData(const QString &newDir,
   bCompress = compress;
   bMoveFiles = moveFiles;
   bRenameFiles = renameFiles;
+  return true;
 }
 
 void WorkingThread::stop()
@@ -54,7 +58,7 @@ void WorkingThread::stop()
   stopped = true;
 }
 
-WorkingThread::run()
+void WorkingThread::run()
 {
   if (stopped) return;
 
@@ -75,7 +79,6 @@ WorkingThread::run()
 
 bool WorkingThread::CheckData()
 {
-  QString nameFilter(tr(*.fb2));
   // check for existence of newDir
   QDir newDir(sNewDir);
   if (!newDir.exists())
@@ -83,14 +86,19 @@ bool WorkingThread::CheckData()
     sStatus = QString(tr("Directory with new files does not exist: %1")).arg(sNewDir);
     return false;
   }
+  if (stopped) return false;
+
   // check for *.fb2 files in new dir
-  newDir.setNameFilters(nameFilter);
+  QStringList filters;
+  filters << tr("*.fb2") << tr("*.fb2.gz");
+  newDir.setNameFilters(filters);
   QDirIterator newDirIterator(newDir);
   if (!newDirIterator.hasNext())
   {
     sStatus = QString(tr("New directory does not have fb2 files: %1")).arg(sNewDir);
     return false;
   }
+  if (stopped) return false;
   // check for old directory, create if it does not exist
   QDir oldDir(sOldDir);
   if (!oldDir.exists())
@@ -101,10 +109,11 @@ bool WorkingThread::CheckData()
       return false;
     }
   }
+  if (stopped) return false;
 
   // find last file in directory
   QStringList filesList;
-  filesList = oldDir.entryList(nameFilter, QDir::NoFilter, QDir::Name | QDir::Reversed);
+  filesList = oldDir.entryList(filters, QDir::NoFilter, QDir::Name | QDir::Reversed);
   if (filesList.isEmpty())
   {
     lStartNumber = 1;
@@ -113,34 +122,54 @@ bool WorkingThread::CheckData()
   {
     // first file in list should have the last number
     QString fName = filesList.at(0);
-    long len = fName.length();
-    QString number = fName.left(len - nameFilter.length() + 1);
+    QString number;
+    if (fName.right(7) == QString(tr(".fb2.gz")))
+    {
+      number = fName.left(fName.length() - 7);
+    }
+    else if (fName.right(4) == QString(tr(".fb2")))
+    {
+      number = fName.left(fName.length() - 4);
+    }
+    else
+    {
+      number = tr("0");
+    }
     lStartNumber = number.toInt() + 1;
   }
+  if (stopped) return false;
 
   // check database connectivity
   if (database.isOpen())
   {
     database.close();
   }
-  database.set
-
-
-
-
+  database.setDatabaseName(sDbName);
+  database.setHostName(sDbHost);
+  database.setUserName(sDbUser);
+  database.setPassword(sDbPass);
+  if (!database.open())
+  {
+    sStatus = QString(tr("Cannot connect to database %1 with user name %2")).arg(sDbName).arg(sDbUser);
+    return false;
+  }
+  return true;
 }
 
 bool WorkingThread::RenameFiles()
 {
 
+  return false;
 }
 
 bool WorkingThread::ParseFb2()
 {
 
+  return false;
 }
 
 bool WorkingThread::MoveFiles()
 {
 
+  return false;
 }
