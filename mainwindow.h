@@ -33,10 +33,5 @@ private slots:
 };
 
 
-class MyThread : public QThread
-{
-public:
-  void run();
-};
 
 #endif // MAINWINDOW_H
