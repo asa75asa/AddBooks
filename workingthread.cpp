@@ -112,16 +112,14 @@ bool WorkingThread::CheckData()
   if (stopped) return false;
 
   // find last file in directory
-  QStringList filesList;
-  filesList = oldDir.entryList(filters, QDir::NoFilter, QDir::Name | QDir::Reversed);
-  if (filesList.isEmpty())
+  oldDir.setNameFilters(filters);
+  QDirIterator oldDirIterator(oldDir);
+  QString lastNumber = tr("0");
+  while (oldDirIterator.hasNext())
   {
-    lStartNumber = 1;
-  }
-  else
-  {
-    // first file in list should have the last number
-    QString fName = filesList.at(0);
+    if (stopped) return false;
+    oldDirIterator.next();
+    QString fName = oldDirIterator.fileName();
     QString number;
     if (fName.right(7) == QString(tr(".fb2.gz")))
     {
@@ -135,8 +133,12 @@ bool WorkingThread::CheckData()
     {
       number = tr("0");
     }
-    lStartNumber = number.toInt() + 1;
+    if (number > lastNumber)
+    {
+      lastNumber = number;
+    }
   }
+  lStartNumber = lastNumber.toInt() + 1;
   if (stopped) return false;
 
   // check database connectivity
